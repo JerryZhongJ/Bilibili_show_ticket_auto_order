@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 
+os.environ["no-proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
 
 def deal_cookies(raw):
     cookies = ""
@@ -20,9 +21,10 @@ def get_login():
         t.close
     with open("./user_data.json") as r:
         config = json.load(r)
-    options = webdriver.EdgeOptions()
+    options = webdriver.ChromeOptions()
     options.add_argument("--log-level=3")
-    WebDriver = webdriver.Edge(options=options)
+    options.binary_location = '/opt/google/chrome/google-chrome'
+    WebDriver = webdriver.Chrome(options=options)
     WebDriver.get("https://show.bilibili.com/")
     WebDriver.find_element(By.CLASS_NAME, "nav-header-register").click()
     while True:
@@ -41,7 +43,7 @@ def get_login():
     print("cookie已保存\n运行结束\n")
     with open("./user_data.json", "w") as f:
         json.dump(config, f, indent=2)
-    os.system("pause")
+    input("")
 
 if __name__ == '__main__':
     get_login()

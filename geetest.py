@@ -1,9 +1,11 @@
 import os
 import json
-import win32api,win32con
+# import win32api,win32con
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
+
+os.environ["no-proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
 
 class dealCode():
 	def __init__(self,specificID=None):
@@ -15,7 +17,7 @@ class dealCode():
 	def load_cookies(self):
 		if not os.path.exists("user_data.json"):
 			print("未找到用户数据文件")
-			os.system("pause")
+			input("")
 			exit()
 		with open("user_data.json","r") as r:
 			try:
@@ -34,9 +36,10 @@ class dealCode():
 					self.WebDriver.add_cookie(cookie_dict={"domain": ".bilibili.com" ,'name' : i[0].strip(), 'value' : i[1].strip()})
 	
 	def init_browser(self):
-		options = webdriver.EdgeOptions()
+		options = webdriver.ChromeOptions()
 		options.add_argument("--log-level=3")
-		self.WebDriver = webdriver.Edge(options=options)
+		options.binary_location = '/opt/google/chrome/google-chrome'
+		self.WebDriver = webdriver.Chrome(options=options)
 		self.WebDriver.get("https://bilibili.com")
 		self.WebDriver.delete_all_cookies()
 
@@ -62,13 +65,13 @@ class dealCode():
 			sleep(0.25)
 			if not os.path.exists("url"):
 				print("请在脚本目录打开此程序")
-				os.system("pause")
+				input("")
 			a = open("url","r")
 			u = a.read()
 			a.close()
 			if u and u.strip() != self.u:
 				self.u = u
-				win32api.MessageBox(0,'需要滑块验证！','通知',win32con.MB_OK)
+				os.system('wsl-notify-send.exe --category $WSL_DISTRO_NAME "Geetest!"')
 				self.WebDriver.get(u)
 
 if __name__ == '__main__':

@@ -11,14 +11,15 @@ from urllib import request
 from urllib.request import Request as Reqtype
 from urllib.parse import urlencode
 from geetest import dealCode
-
-
+import requests
+import traceback
+from call import wake_up_call
 
 class Api:
     """
     API操作
     """
-    def __init__(self,proxies=None,specificID=None,sleepTime=0.15):
+    def __init__(self,proxies=None,specificID=None,sleepTime=0.15,initial_longSleep=10):
         self.proxies=proxies
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0",
@@ -36,6 +37,7 @@ class Api:
             "Connection": "keep-alive"
         }
         self.sleepTime = sleepTime
+        self.initial_longSleep = initial_longSleep
         self.user_data = {}
         self.user_data["specificID"] = specificID
         self.user_data["username"] = ""
@@ -71,29 +73,36 @@ class Api:
 
     def _http(self,url,j=False,data=None,raw=False):
         data = data.encode() if type(data) == type("") else data
-        try:
-            if self.proxies and data:
-                opener = request.build_opener(request.ProxyHandler({'http':self.proxies,'https':self.proxies}))
-                res = opener.open(Reqtype(url,headers=self.headers,method="POST",data=data),timeout=120)
-            elif self.proxies and not data:
-                opener = request.build_opener(request.ProxyHandler({'http':self.proxies,'https':self.proxies}))
-                res = opener.open(Reqtype(url,headers=self.headers,method="GET"),timeout=120)
-            elif data and not self.proxies:
-                res = request.urlopen(Reqtype(url,headers=self.headers,method="POST",data=data),timeout=120)
-            else:
-                res = request.urlopen(Reqtype(url,headers=self.headers,method="GET"),timeout=120)
-        except Exception as e:
-            print("请求超时 请检查网络")
-            print(e)
+        longSleep = self.initial_longSleep
+        while True:
+            try:
+                if self.proxies and data:
+                    opener = request.build_opener(request.ProxyHandler({'http':self.proxies,'https':self.proxies}))
+                    res = opener.open(Reqtype(url,headers=self.headers,method="POST",data=data),timeout=120)
+                elif self.proxies and not data:
+                    opener = request.build_opener(request.ProxyHandler({'http':self.proxies,'https':self.proxies}))
+                    res = opener.open(Reqtype(url,headers=self.headers,method="GET"),timeout=120)
+                elif data and not self.proxies:
+                    res = request.urlopen(Reqtype(url,headers=self.headers,method="POST",data=data),timeout=120)
+                else:
+                    res = request.urlopen(Reqtype(url,headers=self.headers,method="GET"),timeout=120)
 
-        if res.code != 200:
-            raise Exception("ip可能被风控，请求地址: ",url)
-        if j:
-            return json.loads(res.read().decode("utf-8","ignore"))
-        elif raw:
-            return res
-        else:
-            return res.read().decode("utf-8","ignore")
+                if res.code != 200:
+                    raise Exception("ip可能被风控，请求地址: ",url)
+                if j:
+                    return json.loads(res.read().decode("utf-8","ignore"))
+                elif raw:
+                    return res
+                else:
+                    return res.read().decode("utf-8","ignore")
+            except Exception as e:
+                traceback.print_exc()
+                wake_up_call("出bug了！")
+                print(f"休息 {longSleep} 秒")
+                time.sleep(longSleep)
+                longSleep *= 2
+
+        
 
     def orderInfo(self):
         # 获取目标
@@ -351,7 +360,8 @@ class Api:
             # if self.tokenGet():
                 # continue
             if self.orderCreate():
-                os.system("pause")
+                wake_up_call("成功了？")
+                input("")
                 break
 
     def test(self):
