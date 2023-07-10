@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 from call import wake_up_call
-os.environ["no-proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
+os.environ["no_proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
 
 class dealCode():
 	def __init__(self,specificID=None):

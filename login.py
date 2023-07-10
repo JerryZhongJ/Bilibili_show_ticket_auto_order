@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 
-os.environ["no-proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
+os.environ["no_proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
 
 def deal_cookies(raw):
     cookies = ""

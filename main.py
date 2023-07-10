@@ -3,7 +3,7 @@ import os
 from api import Api
 from geetest import dealCode
 from datetime import datetime
-os.environ["no-proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
+os.environ["no_proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
 
 if not os.path.exists("config.txt"):
     print("config.txt文件缺失")
