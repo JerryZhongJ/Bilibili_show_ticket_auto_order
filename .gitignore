@@ -1,1 +1,3 @@
 call_token.py
+*.log
+__pycache__/

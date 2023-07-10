@@ -1,8 +1,8 @@
 import time
 import requests
-
-TOKEN="dQ-yUFVHRDqjr3OWPe9oXh:APA91bHU-65g5sbo5C_e6Qymsxws_VzGjD9zEO8MD2WGXz8jFqqRMxVLeUZG91Ek3ImaUiXz965-DcYsnu3KHzRoNGE1reRmj1nbyFQf8p8L4EwOwwgT1i1T4dZiAQTmOYZeQYr-weiD"  # your token
-def wake_up_call(msg):
+from call_token import TOKEN
+from multiprocessing import Process
+def _wake_up_call(msg):
     def notify():
         headers = {
             "Authorization": "key=AAAASwElybY:APA91bFaTT_zKLcLYqB0soW8PJmFFG7x1F3wiR0MGta9lLsU22uAVa0VD_3zzz-OremJKDEWEf52OD554byamcwAmZldgrQKfwAjjbhZz_5DYT-z1gcflUBFSWVQQ9lSE9KwDBNHULvfVKmQwxa7xNwuPHz-VfdTbw"
@@ -21,12 +21,11 @@ def wake_up_call(msg):
             }
         },
         headers=headers)
-        print(r)
 
     for i in range(10):
         notify()
         time.sleep(1)
 
+def wake_up_call(msg):
+    Process(target=_wake_up_call, args=(msg,)).start()
 
-### paste this line
-wake_up_call("抢到了？")

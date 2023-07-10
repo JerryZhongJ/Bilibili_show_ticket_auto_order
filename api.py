@@ -14,12 +14,13 @@ from geetest import dealCode
 import requests
 import traceback
 from call import wake_up_call
+from datetime import datetime
 
 class Api:
     """
     API操作
     """
-    def __init__(self,proxies=None,specificID=None,sleepTime=0.15,initial_longSleep=10):
+    def __init__(self,proxies=None,specificID=None,sleepTime=0.15,initial_longSleep=10,logfile=""):
         self.proxies=proxies
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0",
@@ -42,6 +43,7 @@ class Api:
         self.user_data["specificID"] = specificID
         self.user_data["username"] = ""
         self.user_data["project_id"] = ""
+        self.logfile=logfile
         # ALL_USER_DATA_LIST = [""]
 
     def load_cookie(self):
@@ -97,7 +99,10 @@ class Api:
                     return res.read().decode("utf-8","ignore")
             except Exception as e:
                 traceback.print_exc()
-                wake_up_call("出bug了！")
+                with open(self.logfile, "a") as f:
+                    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S:"), file=f)
+                    traceback.print_exc(file=f)
+                    print("", file=f)
                 print(f"休息 {longSleep} 秒")
                 time.sleep(longSleep)
                 longSleep *= 2
@@ -241,7 +246,7 @@ class Api:
 
     def error_handle(self,msg):
         print(msg)
-        os.system("pause")
+        input("")
         exit(0)
 
     def menu(self,mtype,data=None):

@@ -4,7 +4,7 @@ import json
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
-
+from call import wake_up_call
 os.environ["no-proxy"] = "*.bilibili.com,bilibili.com,*.hdslb.com,*.amap.com"
 
 class dealCode():
@@ -71,7 +71,7 @@ class dealCode():
 			a.close()
 			if u and u.strip() != self.u:
 				self.u = u
-				os.system('wsl-notify-send.exe --category $WSL_DISTRO_NAME "Geetest!"')
+				wake_up_call("要验证码！")
 				self.WebDriver.get(u)
 
 if __name__ == '__main__':
